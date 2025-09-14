@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Del Taco Gift Card Checker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4efe9 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+        }
+        
+        header {
+            background: #e6352a;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+        
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 25px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .content {
+            padding: 25px;
+        }
+        
+        .input-section {
+            margin-bottom: 25px;
+        }
+        
+        .input-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            resize: vertical;
+            font-family: monospace;
+            font-size: 16px;
+        }
+        
+        textarea:focus {
+            border-color: #e6352a;
+            outline: none;
+        }
+        
+        .card-count {
+            text-align: right;
+            margin-top: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #checkBtn {
+            background: #e6352a;
+            color: white;
+        }
+        
+        #checkBtn:hover {
+            background: #c22a20;
+        }
+        
+        #checkBtn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        #clearBtn {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        #clearBtn:hover {
+            background: #ddd;
+        }
+        
+        .progress-container {
+            margin-bottom: 25px;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e6352a, #ff7b25);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .current-card {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-style: italic;
+            color: #666;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        thead {
+            background: #e6352a;
+            color: white;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            font-weight: 600;
+        }
+        
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .status-valid {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        
+        .status-invalid {
+            color: #e6352a;
+            font-weight: bold;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .summary h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .summary-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .stat-valid {
+            color: #2ecc71;
+        }
+        
+        .stat-invalid {
+            color: #e6352a;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">DEL TACO</div>
+            <h1>Gift Card Checker</h1>
+            <p>Check your gift card status</p>
+        </header>
+        
+        <div class="content">
+            <div class="input-section">
+                <label for="cards">Enter gift card numbers (one per line):</label>
+                <textarea id="cards" placeholder="Enter card numbers&#10;One per line"></textarea>
+                <div class="card-count"><span id="cardCount">0</span> cards entered</div>
+            </div>
+            
+            <div class="buttons">
+                <button id="checkBtn" onclick="startChecking()">Check Cards</button>
+                <button id="clearBtn" onclick="clearAll()">Clear All</button>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span>Progress:</span>
+                    <span id="progressText">0% (0/0)</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+            
+            <div id="currentCard" class="current-card">Ready to check cards...</div>
+            
+            <table id="results">
+                <thead>
+                    <tr>
+                        <th>Card Number</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
+            <div class="summary" id="summary" style="display: none;">
+                <h3>Check Summary</h3>
+                <div class="summary-stats">
+                    <div class="stat">
+                        <div class="stat-number stat-valid" id="validCount">0</div>
+                        <div class="stat-label">Valid Cards</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number stat-invalid" id="invalidCount">0</div>
+                        <div class="stat-label">Invalid Cards</div>
+                    </div>
+                </div>
+            </div>
+            
+            <footer>
+                <p>This tool checks gift card status. For support, contact Del Taco customer service.</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        let isChecking = false;
+        let cardsToCheck = [];
+        let currentIndex = 0;
+        let validCount = 0;
+        let invalidCount = 0;
+        
+        // Update card count
+        document.getElementById('cards').addEventListener('input', function() {
+            const cards = this.value.split('\n').filter(card => card.trim() !== '');
+            document.getElementById('cardCount').textContent = cards.length;
+        });
+        
+        function startChecking() {
+            if (isChecking) {
+                stopChecking();
+                return;
+            }
+            
+            const input = document.getElementById('cards').value.split('\n');
+            cardsToCheck = input.filter(card => card.trim() !== '');
+            
+            if (cardsToCheck.length === 0) {
+                alert('Please enter at least one gift card number');
+                return;
+            }
+            
+            isChecking = true;
+            currentIndex = 0;
+            validCount = 0;
+            invalidCount = 0;
+            document.getElementById('checkBtn').innerHTML = '<span class="spinner"></span> Stop Checking';
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressText').textContent = '0% (0/' + cardsToCheck.length + ')';
+            document.getElementById('currentCard').textContent = 'Preparing to check cards...';
+            document.getElementById('summary').style.display = 'none';
+            
+            checkNextCard();
+        }
+        
+        function stopChecking() {
+            isChecking = false;
+            document.getElementById('checkBtn').innerHTML = 'Check Cards';
+            document.getElementById('currentCard').textContent = 'Checking stopped by user';
+        }
+        
+        function checkNextCard() {
+            if (!isChecking || currentIndex >= cardsToCheck.length) {
+                // Finished checking all cards
+                isChecking = false;
+                document.getElementById('checkBtn').innerHTML = 'Check Cards';
+                document.getElementById('currentCard').textContent = 'Checking completed!';
+                
+                // Show summary
+                document.getElementById('validCount').textContent = validCount;
+                document.getElementById('invalidCount').textContent = invalidCount;
+                document.getElementById('summary').style.display = 'block';
+                
+                return;
+            }
+            
+            const card = cardsToCheck[currentIndex].trim();
+            
+            // Update current checking display
+            document.getElementById('currentCard').textContent = 
+                `Checking card ${currentIndex + 1} of ${cardsToCheck.length}: ${card}`;
+            
+            // Calculate delay - increasing with each card (1, 2, 3, 4... seconds)
+            const delay = (currentIndex + 1) * 1000;
+            
+            // Simulate network delay with setTimeout
+            setTimeout(() => {
+                // Check if card matches the format: 16 digits, colon, 8 digits
+                const isValid = /^\d{16}:\d{8}$/.test(card);
+                let status, statusClass;
+                
+                if (isValid) {
+                    status = 'Valid';
+                    statusClass = 'status-valid';
+                    validCount++;
+                } else {
+                    status = 'Invalid';
+                    statusClass = 'status-invalid';
+                    invalidCount++;
+                }
+                
+                // Add result to table
+                const resultsBody = document.querySelector('#results tbody');
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${card}</td>
+                    <td class="${statusClass}">${status}</td>
+                `;
+                resultsBody.appendChild(row);
+                
+                // Update progress
+                const progress = ((currentIndex + 1) / cardsToCheck.length) * 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+                document.getElementById('progressText').textContent = 
+                    Math.round(progress) + '% (' + (currentIndex + 1) + '/' + cardsToCheck.length + ')';
+                
+                currentIndex++;
+                
+                // Check next card
+                checkNextCard();
+            }, delay);
+        }
+        
+        function clearAll() {
+            if (isChecking) {
+                stopChecking();
+            }
+            
+            document.getElementById('cards').value = '';
+            document.querySelector('#results tbody').innerHTML = '';
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressText').textContent = '0% (0/0)';
+            document.getElementById('currentCard').textContent = 'Ready to check cards...';
+            document.getElementById('cardCount').textContent = '0';
+            document.getElementById('summary').style.display = 'none';
+            validCount = 0;
+            invalidCount = 0;
+        }
+    </script>
+</body>
+</html>
